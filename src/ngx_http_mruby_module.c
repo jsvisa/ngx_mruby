@@ -69,6 +69,21 @@ static ngx_int_t ngx_http_mruby_init(ngx_conf_t *cf);
 static ngx_int_t ngx_http_mruby_handler_init(ngx_http_core_main_conf_t *cmcf);
 
 static ngx_command_t ngx_http_mruby_commands[] = {
+
+    { ngx_string("mruby_init_inline"),
+      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+      ngx_http_mruby_init_inline,
+      NGX_HTTP_MAIN_CONF_OFFSET,
+      0,
+      NULL },
+
+    { ngx_string("mruby_init"),
+      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+      ngx_http_mruby_init_phase,
+      NGX_HTTP_MAIN_CONF_OFFSET,
+      0,
+      NULL },
+
     { ngx_string("mruby_cache"),
       NGX_HTTP_LOC_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_FLAG,
       ngx_conf_set_flag_slot,
@@ -258,8 +273,8 @@ static void *ngx_http_mruby_create_loc_conf(ngx_conf_t *cf)
     conf->server_rewrite_code = NGX_CONF_UNSET_PTR;
     conf->rewrite_code        = NGX_CONF_UNSET_PTR;
     conf->access_code         = NGX_CONF_UNSET_PTR;
-    conf->handler_code        = NGX_CONF_UNSET_PTR;
-    conf->log_handler_code    = NGX_CONF_UNSET_PTR;
+    conf->content_code        = NGX_CONF_UNSET_PTR;
+    conf->log_code    = NGX_CONF_UNSET_PTR;
 
     conf->post_read_inline_code      = NGX_CONF_UNSET_PTR;
     conf->server_rewrite_inline_code = NGX_CONF_UNSET_PTR;
@@ -282,8 +297,8 @@ static char *ngx_http_mruby_merge_loc_conf(ngx_conf_t *cf, void *parent, void *c
     NGX_MRUBY_MERGE_CODE(prev->server_rewrite_code, conf->server_rewrite_code);
     NGX_MRUBY_MERGE_CODE(prev->rewrite_code,        conf->rewrite_code);
     NGX_MRUBY_MERGE_CODE(prev->access_code,         conf->access_code);
-    NGX_MRUBY_MERGE_CODE(prev->handler_code,        conf->handler_code);
-    NGX_MRUBY_MERGE_CODE(prev->log_handler_code,    conf->log_handler_code);
+    NGX_MRUBY_MERGE_CODE(prev->content_code,        conf->content_code);
+    NGX_MRUBY_MERGE_CODE(prev->log_code,    conf->log_code);
 
     NGX_MRUBY_MERGE_CODE(prev->post_read_inline_code,      conf->post_read_inline_code);
     NGX_MRUBY_MERGE_CODE(prev->server_rewrite_inline_code, conf->server_rewrite_inline_code);
@@ -310,13 +325,19 @@ static ngx_int_t ngx_http_mruby_preinit(ngx_conf_t *cf)
 static ngx_int_t ngx_http_mruby_init(ngx_conf_t *cf)
 {
     ngx_http_core_main_conf_t  *cmcf;
+    ngx_http_mruby_main_conf_t *mmcf;
 
     cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
+    mmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_mruby_module);
 
     ngx_mruby_request = NULL;
 
     if (ngx_http_mruby_handler_init(cmcf) != NGX_OK) {
         return NGX_ERROR;
+    }
+
+    if (mmcf->init_code != NULL) {
+        return ngx_mrb_run_conf(cf, mmcf->state, mmcf->init_code);
     }
 
     return NGX_OK;

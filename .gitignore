@@ -8,5 +8,8 @@ config.status
 config.log
 mruby/*
 tags
+.tags
+.tags_sorted_by_file
+.gitignore
 *.swp
-build_config.rb
+./build_config.rb

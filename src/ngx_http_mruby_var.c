@@ -36,7 +36,7 @@ static mrb_value ngx_mrb_var_get(mrb_state *mrb, mrb_value self, const char *c_n
     // ngx_str_set(&ngx_name, c_name);
     ngx_name.len  = strlen(c_name);
     ngx_name.data = (u_char *)c_name;
-    len                     = ngx_name.len;
+    len = ngx_name.len;
     // check alloced memory
     if (len) {
         low = ngx_pnalloc(r->pool, len);

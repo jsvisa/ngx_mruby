@@ -1,4 +1,4 @@
-MRuby::Build.new do |conf|
+Ruby::Build.new do |conf|
   # load specific toolchain settings
   toolchain :gcc
 
@@ -22,10 +22,11 @@ MRuby::Build.new do |conf|
   conf.gem :git => 'git://github.com/iij/mruby-pack.git'
   conf.gem :git => 'git://github.com/iij/mruby-digest.git'
   conf.gem :git => 'git://github.com/mattn/mruby-json.git'
-  conf.gem :git => 'git://github.com/mattn/mruby-curl.git'
-  conf.gem :git => 'git://github.com/matsumoto-r/mruby-redis.git'
+  #conf.gem :git => 'git://github.com/mattn/mruby-curl.git'
+  #conf.gem :git => 'git://github.com/matsumoto-r/mruby-redis.git'
   conf.gem :git => 'git://github.com/matsumoto-r/mruby-sleep.git'
   conf.gem :git => 'git://github.com/matsumoto-r/mruby-config.git'
+  conf.gem :git => 'https://github.com/iij/mruby-io.git'
 
   # use markdown on mod_mruby
   #conf.gem :git => 'git://github.com/matsumoto-r/mruby-discount.git'

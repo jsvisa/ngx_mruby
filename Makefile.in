@@ -44,7 +44,7 @@ clobber: clean_mruby clean
 
 #   build mruby
 build_mruby:
-	cp build_config.rb $(MRUBY_ROOT)/build_config.rb && cd $(MRUBY_ROOT) && $(RAKE)
+	cp build_config.rb $(MRUBY_ROOT)/build_config.rb && cd $(MRUBY_ROOT) && $(RAKE) && cd $(MRUBY_ROOT) && git checkout build_config.rb
 
 #   clean mruby
 clean_mruby:
@@ -60,3 +60,4 @@ generate_gems_config: build_mruby
 	@echo CORE_LIBS=\"\$$CORE_LIBS $(LDFLAGS) $(LIBS)\" > ./mrbgems_config
 	@echo CORE_INCS=\"\$$CORE_INCS $(CFLAGS)\" >> ./mrbgems_config
 
+.PHONY: install

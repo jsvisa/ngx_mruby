@@ -1,4 +1,4 @@
-Ruby::Build.new do |conf|
+MRuby::Build.new do |conf|
   # load specific toolchain settings
   toolchain :gcc
 
